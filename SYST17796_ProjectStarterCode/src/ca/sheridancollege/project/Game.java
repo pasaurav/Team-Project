@@ -4,55 +4,93 @@
  * Add your name as an author and the date!
  */
 package ca.sheridancollege.project;
+import java.util.Scanner;
 
-import java.util.ArrayList;
-
+public class Game 
+{ 
 /**
  * The class that models your game. You should create a more specific child of this class and instantiate the methods
  * given.
  *
  * @author dancye
  * @author Paul Bonenfant Jan 2020
+ * @modifier Arshdeep Kaur, 991711763
+ * 
  */
-public abstract class Game {
+public static void main(String[] args) 
+{
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Enter your name: ");
+    String playerName = scanner.nextLine();
+    Player player = new Player(playerName);
+    Player dealer = new Player("Dealer");
 
-    private final String name;//the title of the game
-    private ArrayList<Player> players;// the players of the game
+    GroupOfCards GroupOfCards = new GroupOfCards();
+    GroupOfCards.shuffle();
 
-    public Game(String name) {
-        this.name = name;
-        players = new ArrayList();
+    player.addCard(GroupOfCards.dealCard());
+    dealer.addCard(GroupOfCards.dealCard());
+    player.addCard(GroupOfCards.dealCard());
+    dealer.addCard(GroupOfCards.dealCard());
+
+    System.out.println("----- Blackjack -----");
+    System.out.println("Welcome, " + player.getName() + "!");
+    System.out.println("Let's play!");
+
+    boolean gameOver = false;
+    while (!gameOver) {
+      System.out.println("\n--- Player's Turn ---");
+      player.playTurn(GroupOfCards, scanner);
+
+      if (player.isBust()) 
+      {
+        gameOver = true;
+        break;
+      }
+
+      System.out.println("\n--- Dealer's Turn ---");
+      dealer.playTurn(GroupOfCards);
+
+      if (dealer.isBust()) 
+      {
+        gameOver = true;
+        break;
+      }
+
+      if (player.isStaying() && dealer.isStaying()) 
+      {
+        gameOver = true;
+      }
     }
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
+    System.out.println("\n--- Game Over ---");
+    System.out.println("Player's Hand: " + player.getHand());
+    System.out.println("Dealer's Hand: " + dealer.getHand());
+
+    if (player.isBust()) 
+    {
+      System.out.println("You went bust! Dealer wins.");
+    } else if (dealer.isBust()) 
+    {
+      System.out.println("Dealer went bust! You win.");
+    } else 
+    {
+      int playerScore = player.calculateScore();
+      int dealerScore = dealer.calculateScore();
+
+      System.out.println("Player's Score: " + playerScore);
+      System.out.println("Dealer's Score: " + dealerScore);
+
+      if (playerScore > dealerScore) 
+      {
+        System.out.println("Congratulations! You win!");
+      } else if (playerScore < dealerScore) 
+      {
+        System.out.println("Dealer wins!");
+      } else 
+      {
+        System.out.println("It's a tie!");
+      }
     }
-
-    /**
-     * @return the players of this game
-     */
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    /**
-     * @param players the players of this game
-     */
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
-    }
-
-    /**
-     * Play the game. This might be one method or many method calls depending on your game.
-     */
-    public abstract void play();
-
-    /**
-     * When the game is over, use this method to declare and display a winning player.
-     */
-    public abstract void declareWinner();
-
-}//end class
+  }
+}
