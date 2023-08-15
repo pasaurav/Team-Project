@@ -12,6 +12,7 @@ package ca.sheridancollege.project;
  * @author dancye
  * @modifier Sauravkumar, 991705077
  * 
+ * 
  */
 public class Card {
   private String suit;
